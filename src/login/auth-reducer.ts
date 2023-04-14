@@ -2,7 +2,6 @@ import { Dispatch } from 'redux'
 import {SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType} from "../app/app-reducer";
 import {authAPI, LoginParamsType} from "../api/todolists-api";
 import {handleServerAppError} from "../utils/error-utils";
-import {addTaskAC} from "../features/TodolistsList/tasks-reducer";
 
 
 const initialState = {
