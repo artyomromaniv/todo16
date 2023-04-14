@@ -8,6 +8,9 @@ import FormLabel from '@mui/material/FormLabel';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import {useFormik} from "formik";
+import {authAPI} from "../api/todolists-api";
+import {useAppDispatch} from "../app/store";
+import {loginTC} from "../login/auth-reducer";
 
 type FormikErrorType = {
    email?: string
@@ -16,6 +19,9 @@ type FormikErrorType = {
 }
 
 export const Login = () => {
+
+   const dispatch  = useAppDispatch()
+
    const formik = useFormik({
       initialValues: {
          email: '',
@@ -31,14 +37,15 @@ export const Login = () => {
          }
          if (!values.password) {
             errors.password = 'Required';
-         } else if (values.password.length > 7) {
-            errors.password = 'Password should be max 7 symbols';
+         } else if (values.password.length > 20) {
+            errors.password = 'Password should be max 20 symbols';
          }
 
          return errors
       },
       onSubmit: values => {
          alert(JSON.stringify(values, null, 2));
+         dispatch(loginTC(values))
          formik.resetForm();
       },
    })
@@ -78,7 +85,7 @@ export const Login = () => {
                      label={'Remember me'}
                      control={
                         <Checkbox
-                           checked = {formik.values.rememberMe}
+                           checked={formik.values.rememberMe}
                            {...formik.getFieldProps('rememberMe')}/>}
                   />
                   <Button
