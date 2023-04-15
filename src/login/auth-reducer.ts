@@ -33,7 +33,18 @@ export const loginTC = (data: LoginParamsType) => (dispatch: Dispatch<ActionsTyp
             handleServerAppError(res.data, dispatch);
          }
       })
-
+}
+export const meTC = () => (dispatch: Dispatch<ActionsType>) => {
+   dispatch(setAppStatusAC('loading'))
+   authAPI.me()
+      .then((res)=>{
+         if (res.data.resultCode === 0) {
+            dispatch(setIsLoggedInAC(true))
+            dispatch(setAppStatusAC('succeeded'))
+         } else {
+            handleServerAppError(res.data, dispatch);
+         }
+      })
 }
 
 // types
