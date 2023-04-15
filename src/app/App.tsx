@@ -15,15 +15,24 @@ import {ErrorSnackbar} from '../components/ErrorSnackbar/ErrorSnackbar'
 import {Login} from "../features/Login";
 import {Navigate, Route, Routes} from "react-router-dom";
 import {meTC} from "../login/auth-reducer";
+import {CircularProgress} from "@mui/material";
 
 
 function App() {
    const dispatch = useAppDispatch()
     const status = useAppSelector<RequestStatusType>((state) => state.app.status)
+    const isInitialized = useAppSelector<boolean>((state) => state.auth.isInitialized)
 
    useEffect(()=>{
       dispatch(meTC())
    },[])
+
+   if (!isInitialized){
+      return <div
+         style={{position: 'fixed', top: '30%', textAlign: 'center', width: '100%'}}>
+         <CircularProgress/>
+      </div>
+   }
 
     return (
         <div className="App">
