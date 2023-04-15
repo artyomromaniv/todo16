@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux'
 import {SetAppErrorActionType, setAppStatusAC, SetAppStatusActionType} from "../app/app-reducer";
 import {authAPI, LoginParamsType} from "../api/todolists-api";
-import {handleServerAppError} from "../utils/error-utils";
+import {handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
 
 
 const initialState = {
@@ -16,6 +16,8 @@ export const authReducer = (state: InitialStateType = initialState, action: Acti
          return {...state, isLoggedIn: action.value}
       case 'login/SET-IS-INITIALIZED':
          return {...state, isInitialized: action.value}
+      case "login/SET-LOGOUT":
+         return {...state,isLoggedIn: action.value}
       default:
          return state
    }
@@ -23,6 +25,8 @@ export const authReducer = (state: InitialStateType = initialState, action: Acti
 // actions
 export const setIsLoggedInAC = (value: boolean) =>
    ({type: 'login/SET-IS-LOGGED-IN', value} as const)
+export const setLogoutAC = (value: boolean) =>
+   ({type: 'login/SET-LOGOUT', value} as const)
 export const setIsInitializedAC = (value: boolean) =>
    ({type: 'login/SET-IS-INITIALIZED', value} as const)
 
@@ -37,6 +41,21 @@ export const loginTC = (data: LoginParamsType) => (dispatch: Dispatch<ActionsTyp
          } else {
             handleServerAppError(res.data, dispatch);
          }
+      })
+}
+export const logoutTC = () => (dispatch: Dispatch<ActionsType>) => {
+   dispatch(setAppStatusAC('loading'))
+   authAPI.logout()
+      .then(res => {
+         if (res.data.resultCode === 0) {
+            dispatch(setIsLoggedInAC(false))
+            dispatch(setAppStatusAC('succeeded'))
+         } else {
+            handleServerAppError(res.data, dispatch)
+         }
+      })
+      .catch((error) => {
+         handleServerNetworkError(error, dispatch)
       })
 }
 export const meTC = () => (dispatch: Dispatch<ActionsType>) => {
@@ -57,4 +76,4 @@ export const meTC = () => (dispatch: Dispatch<ActionsType>) => {
 
 // types
 type ActionsType = ReturnType<typeof setIsLoggedInAC> | SetAppStatusActionType | SetAppErrorActionType
-| ReturnType<typeof setIsInitializedAC>
+| ReturnType<typeof setIsInitializedAC> | ReturnType<typeof setLogoutAC>
